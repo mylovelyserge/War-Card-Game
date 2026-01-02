@@ -14,6 +14,9 @@ struct CardsView: View {
     @State private var playerScore = 0
     @State private var cpuScore = 0
     
+    @State private var rounds = 0
+    @State private var isGameOver: Bool = false
+    
     var body: some View {
         VStack {
             HStack(spacing: 60) {
@@ -27,6 +30,17 @@ struct CardsView: View {
                 changeCard()
             } label: {
                 Image("button")
+            }
+            .alert("Game over", isPresented: $isGameOver) {
+                Button("New Game", role: .cancel) {
+                    rounds = 0
+                    playerScore = 0
+                    cpuScore = 0
+                    card1 = 1
+                    card2 = 1
+                }
+            } message: {
+                Text(showTheWinner())
             }
             
             HStack {
@@ -60,8 +74,24 @@ struct CardsView: View {
         
         if card1 > card2 {
             playerScore += 1
+            rounds += 1
         } else if card2 > card1 {
             cpuScore += 1
+            rounds += 1
+        }
+        
+        if rounds == 5 {
+            isGameOver = true
+        }
+    }
+    
+    func showTheWinner() -> String {
+        if playerScore > cpuScore {
+            return "Player wins with score \(playerScore)!"
+        } else if cpuScore > playerScore {
+            return "CPU wins with score \(cpuScore)!"
+        } else {
+            return "Equals with score \(playerScore) and \(cpuScore)!"
         }
     }
 }
